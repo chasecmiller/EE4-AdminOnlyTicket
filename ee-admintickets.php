@@ -75,10 +75,11 @@ class Plugin {
         if ( ( $post->post_type != 'espresso_events') || ( !array_key_exists('ticket_visibility', $_POST) )  ) {
             return;
         }
-        if (!array_key_exists('ticket_visibility', $_POST)) {
-            return;
-        }
+
+        //Pull the values set for ticket visibility.
         $tickets = array_filter($_POST['ticket_visibility'], 'is_numeric');
+        
+        //Loop through and assign the visibitily of each ticket to that tickets meta.
         foreach($tickets as $iTicket => $iOption) {
             if (is_numeric($iTicket)) {
                 if ($ticket = \EEM_Ticket::instance()->get_one_by_ID($iTicket)) {
