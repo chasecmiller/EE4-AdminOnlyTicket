@@ -25,16 +25,18 @@ class Plugin {
     // Ticket handler
     // Might be able to ignore the is_admin side of things if the code is never called.  Check EE4 source.
     public function eeTicketShow($ticket_row_html, \EE_Ticket $ticket) {
+        
+        //If we are in the admin we should return all ticket rows anyway.
         if (is_admin()) {
             return $ticket_row_html;
         }
+
+        //Not in the admin, check if the ticket visibility is set to admin only.
         $admin_only = $ticket->get_extra_meta('visibility', true);
         if (!$admin_only) {
+            //Not an admin_only ticket, return the ticket row for display on the front end.
             return $ticket_row_html;
         }
-        return '';
-        return $ticket_row_html;
-    }
 
         //This is an admin only ticket and we are not within the admin, return NULL to display nothing.
         return NULL;
