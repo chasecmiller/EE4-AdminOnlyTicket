@@ -36,6 +36,10 @@ class Plugin {
         return $ticket_row_html;
     }
 
+        //This is an admin only ticket and we are not within the admin, return NULL to display nothing.
+        return NULL;
+    }
+
     // Display option in the ticket editor.
     public function eeTicketMeta($tkt, $TKT_ID) {
         global $post;
