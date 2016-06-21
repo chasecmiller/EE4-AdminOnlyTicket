@@ -85,7 +85,7 @@ class Plugin {
                     if ($iOption == 0 && false) {
                         // delete.
                     } else {
-                        $ticket->add_extra_meta('visibility', $iOption, true) || $ticket->update_extra_meta('visibility', $iOption);
+                        $ticket->update_extra_meta('visibility', $iOption);
                     }
                 }
 
