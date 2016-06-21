@@ -28,8 +28,8 @@ class Plugin {
         if (is_admin()) {
             return $ticket_row_html;
         }
-        $i = $ticket->get_extra_meta('visibility', true);
-        if (!$i) {
+        $admin_only = $ticket->get_extra_meta('visibility', true);
+        if (!$admin_only) {
             return $ticket_row_html;
         }
         return '';
