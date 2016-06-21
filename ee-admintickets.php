@@ -71,7 +71,8 @@ class Plugin {
 
     // Save post handler
     public function eePostSave($iPost, $post) {
-        if ($post->post_type != 'espresso_events') {
+        //Get out if not saving an espresso_events post type or the ticket_visibility field can not be found within $_POST.
+        if ( ( $post->post_type != 'espresso_events') || ( !array_key_exists('ticket_visibility', $_POST) )  ) {
             return;
         }
         if (!array_key_exists('ticket_visibility', $_POST)) {
