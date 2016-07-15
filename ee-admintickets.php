@@ -25,15 +25,21 @@ class Plugin {
     // Ticket handler
     // Might be able to ignore the is_admin side of things if the code is never called.  Check EE4 source.
     public function eeTicketShow($ticket_row_html, \EE_Ticket $ticket) {
+        
+        //If we are in the admin we should return all ticket rows anyway.
         if (is_admin()) {
             return $ticket_row_html;
         }
-        $i = $ticket->get_extra_meta('visibility', true);
-        if (!$i) {
+
+        //Not in the admin, check if the ticket visibility is set to admin only.
+        $admin_only = $ticket->get_extra_meta('visibility', true);
+        if (!$admin_only) {
+            //Not an admin_only ticket, return the ticket row for display on the front end.
             return $ticket_row_html;
         }
-        return '';
-        return $ticket_row_html;
+
+        //This is an admin only ticket and we are not within the admin, return NULL to display nothing.
+        return NULL;
     }
 
     // Display option in the ticket editor.
@@ -65,20 +71,22 @@ class Plugin {
 
     // Save post handler
     public function eePostSave($iPost, $post) {
-        if ($post->post_type != 'espresso_events') {
+        //Get out if not saving an espresso_events post type or the ticket_visibility field can not be found within $_POST.
+        if ( ( $post->post_type != 'espresso_events') || ( !array_key_exists('ticket_visibility', $_POST) )  ) {
             return;
         }
-        if (!array_key_exists('ticket_visibility', $_POST)) {
-            return;
-        }
+
+        //Pull the values set for ticket visibility.
         $tickets = array_filter($_POST['ticket_visibility'], 'is_numeric');
+        
+        //Loop through and assign the visibitily of each ticket to that tickets meta.
         foreach($tickets as $iTicket => $iOption) {
             if (is_numeric($iTicket)) {
                 if ($ticket = \EEM_Ticket::instance()->get_one_by_ID($iTicket)) {
                     if ($iOption == 0 && false) {
                         // delete.
                     } else {
-                        $ticket->add_extra_meta('visibility', $iOption, true) || $ticket->update_extra_meta('visibility', $iOption);
+                        $ticket->update_extra_meta('visibility', $iOption);
                     }
                 }
 
