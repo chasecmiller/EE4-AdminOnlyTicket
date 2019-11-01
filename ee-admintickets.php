@@ -17,6 +17,7 @@ class Plugin {
     public function __construct() {
         add_filter( 'FHEE__ticket_selector_chart_template__do_ticket_entire_row', array(&$this, 'eeTicketShow'), 10, 2);
         add_action('AHEE__event_tickets_datetime_ticket_row_template__advanced_details_end', array(&$this, 'eeTicketMeta'), 10, 2);
+        add_action('FHEE__EventEspresso_WaitList_domain_services_forms__WaitListFormHandler__generate__tickets', array(&$this, 'eeRemoveAdminOnlyTicketsWaitlist'), 10, 3);
 
         add_action( 'save_post', array(&$this, 'eePostSave'), 10, 2);
     }
@@ -67,6 +68,22 @@ class Plugin {
         );
         echo '</select>';
         echo '<br />';
+    }
+
+    // Remove Admin Only tickets from the Waitlist Form.
+    public function eeRemoveAdminOnlyTicketsWaitlist($tickets, $active_tickets, $event) {
+        // Pull all the tickets set as admin only on the event.
+        $admin_only_tickets = $event->tickets(
+            array(
+                array(
+                    'Extra_Meta.EXM_key' => 'visibility',
+                    'Extra_Meta.EXM_value' => true
+                ),
+            )
+        );
+        // Remove admin only tickets from the waitlist selection.
+        $tickets = array_diff_key( $tickets, $admin_only_tickets);
+        return $tickets;
     }
 
     // Save post handler
